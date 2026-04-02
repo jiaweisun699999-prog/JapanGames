@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build:gdd": "node scripts/build-gdd-xlsx.mjs",
-    "dev": "npx --yes serve web -l 5180"
+    "dev": "npx --yes serve web -l 5180",
+    "import:portraits": "node scripts/import-portraits.mjs"
   },
   "devDependencies": {
     "xlsx": "^0.18.5"

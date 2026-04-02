@@ -19,6 +19,7 @@ function defaultSave() {
       L03: false,
       L04: false,
       L05: false,
+      L06: false,
     },
     soundOn: true,
   };

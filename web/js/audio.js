@@ -202,6 +202,7 @@ export async function playAmbience(preset, enabled) {
     L03: { noise: 0.028, hum: 0.02, humFreq: 246.94, lfo: 0.09, piano: { transpose: 3, tempo: 1.06, vel: 0.075, dry: 0.5, wet: 1.05 } },
     L04: { noise: 0.022, hum: 0.016, humFreq: 174.61, lfo: 0.14, piano: { transpose: -2, tempo: 0.92, vel: 0.07, dry: 0.45, wet: 1.15 } },
     L05: { noise: 0.04, hum: 0.012, humFreq: 164.81, lfo: 0.05, piano: { transpose: -5, tempo: 1.08, vel: 0.065, dry: 0.6, wet: 1.2 } },
+    L06: { noise: 0.038, hum: 0.02, humFreq: 130.81, lfo: 0.11, piano: { transpose: -3, tempo: 0.88, vel: 0.072, dry: 0.42, wet: 1.25 } },
   };
   const p = presets[preset] || presets.hub;
   const pianoCfg = p.piano;
