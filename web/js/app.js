@@ -7,6 +7,7 @@ import { startGame as startL04 } from "./games/l04-yokohama.js";
 import { startGame as startL05 } from "./games/l05-nikko.js";
 import { mountQuiz } from "./quiz/quiz-ui.js";
 import { mountChinaQuiz } from "./quiz-china/china-quiz.js";
+import { mountSpend } from "./spend/spend-ui.js";
 
 const LEVELS = [
   {
@@ -57,6 +58,7 @@ const screens = {
   gallery: document.getElementById("screen-gallery"),
   settings: document.getElementById("screen-settings"),
   quiz: document.getElementById("screen-quiz"),
+  spend: document.getElementById("screen-spend"),
 };
 
 const el = {
@@ -85,6 +87,8 @@ let currentLevelId = null;
 let pendingAgain = null;
 /** @type {null | (() => void)} */
 let quizDestroy = null;
+/** @type {null | (() => void)} */
+let spendDestroy = null;
 
 function teardownQuiz() {
   if (quizDestroy) {
@@ -95,7 +99,17 @@ function teardownQuiz() {
   if (qr) qr.innerHTML = "";
 }
 
+function teardownSpend() {
+  if (spendDestroy) {
+    spendDestroy();
+    spendDestroy = null;
+  }
+  const sr = document.getElementById("spend-root");
+  if (sr) sr.innerHTML = "";
+}
+
 function openQuiz() {
+  teardownSpend();
   teardownQuiz();
   if (destroyGame) {
     destroyGame();
@@ -115,6 +129,7 @@ function openQuiz() {
 }
 
 function openChinaQuiz() {
+  teardownSpend();
   teardownQuiz();
   if (destroyGame) {
     destroyGame();
@@ -131,6 +146,26 @@ function openChinaQuiz() {
     },
   });
   showScreen("quiz");
+}
+
+function openSpend() {
+  teardownSpend();
+  teardownQuiz();
+  if (destroyGame) {
+    destroyGame();
+    destroyGame = null;
+  }
+  currentLevelId = null;
+  el.gameRoot.innerHTML = "";
+  const root = document.getElementById("spend-root");
+  if (!root) return;
+  spendDestroy = mountSpend(root, {
+    onBack: () => {
+      teardownSpend();
+      showScreen("hub");
+    },
+  });
+  showScreen("spend");
 }
 
 function isSightseeing() {
@@ -155,6 +190,18 @@ function showScreen(name) {
 
 function buildCards() {
   el.cards.innerHTML = "";
+  const spendBtn = document.createElement("button");
+  spendBtn.type = "button";
+  spendBtn.className = "level-card quiz-entry-card";
+  spendBtn.innerHTML = `
+    <div class="quiz-entry-visual" aria-hidden="true">¥</div>
+    <div class="meta">
+      <p class="name">花光 1 个亿</p>
+      <p class="spot">50 张角色卡 · +/- 天数叠加 · 实时剩余预算 · 点击 + 弹中文感谢气泡</p>
+    </div>`;
+  spendBtn.addEventListener("click", openSpend);
+  el.cards.appendChild(spendBtn);
+
   const quizBtn = document.createElement("button");
   quizBtn.type = "button";
   quizBtn.className = "level-card quiz-entry-card";
@@ -213,6 +260,7 @@ function renderGallery() {
 function startLevel(id) {
   const lv = LEVELS.find((x) => x.id === id);
   if (!lv) return;
+  teardownSpend();
   teardownQuiz();
   if (destroyGame) {
     destroyGame();
@@ -267,6 +315,7 @@ el.resultHub.addEventListener("click", () => {
 });
 
 el.btnHome.addEventListener("click", () => {
+  teardownSpend();
   teardownQuiz();
   if (destroyGame) {
     destroyGame();
@@ -279,6 +328,7 @@ el.btnHome.addEventListener("click", () => {
 });
 
 el.btnGallery.addEventListener("click", () => {
+  teardownSpend();
   teardownQuiz();
   if (destroyGame) {
     destroyGame();
@@ -292,6 +342,7 @@ el.btnGallery.addEventListener("click", () => {
 });
 
 el.btnSettings.addEventListener("click", () => {
+  teardownSpend();
   teardownQuiz();
   if (destroyGame) {
     destroyGame();
