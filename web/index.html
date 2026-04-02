@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>关东之旅 · 休闲小游戏</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Zen+Kaku+Gothic+New:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="top-bar">
+        <button type="button" class="btn-ghost" id="btn-home" hidden>← 主站</button>
+        <h1 class="brand" id="brand-title">关东之旅</h1>
+        <div class="top-actions">
+          <button type="button" class="btn-ghost" id="btn-gallery" title="收集">📮</button>
+          <button type="button" class="btn-ghost" id="btn-settings" title="设置">⚙</button>
+        </div>
+      </header>
+
+      <main>
+        <section id="screen-hub" class="screen active">
+          <div class="hero">
+            <img id="hero-img" src="assets/images/hub-kanto.png" alt="" width="1200" height="630" />
+            <div class="hero-text">
+              <p class="hero-tag">関東 · 癒しのミニゲーム</p>
+              <p class="hero-desc">五处关东意象的小游戏，标准 / 观光两种节奏。收集明信片印章吧。</p>
+            </div>
+          </div>
+          <p class="mode-row">
+            <span class="label">难度</span>
+            <label class="toggle"><input type="radio" name="difficulty" value="normal" checked /> 标准</label>
+            <label class="toggle"><input type="radio" name="difficulty" value="sightseeing" /> 观光</label>
+          </p>
+          <div class="card-grid" id="level-cards"></div>
+        </section>
+
+        <section id="screen-game" class="screen">
+          <div class="game-bar">
+            <span id="game-title"></span>
+            <span id="game-hud"></span>
+          </div>
+          <div id="game-root" class="game-root"></div>
+          <p class="hint" id="game-hint"></p>
+        </section>
+
+        <section id="screen-gallery" class="screen">
+          <h2>明信片收集</h2>
+          <p class="sub">完成一局即可解锁对应印章（本地保存）。</p>
+          <ul class="stamp-list" id="stamp-list"></ul>
+        </section>
+
+        <section id="screen-settings" class="screen">
+          <h2>设置</h2>
+          <label class="row"><input type="checkbox" id="set-sound" checked /> 音效与 BGM（程序化：环境底噪 + 车站钢琴风琶音）</label>
+          <p class="fine">钢琴与混响均为 Web Audio 实时合成，非录音室成品；若需真实音源可将 <code>audio.js</code> 改为播放你的 MP3 / OGG。</p>
+        </section>
+      </main>
+
+      <div id="modal-result" class="modal" hidden>
+        <div class="modal-card">
+          <h3 id="result-title">本局结束</h3>
+          <p id="result-body"></p>
+          <div class="modal-actions">
+            <button type="button" class="btn-primary" id="result-again">再来一局</button>
+            <button type="button" class="btn-ghost" id="result-hub">回主站</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
