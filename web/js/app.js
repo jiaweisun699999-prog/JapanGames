@@ -5,6 +5,8 @@ import { startGame as startL02 } from "./games/l02-asakusa.js";
 import { startGame as startL03 } from "./games/l03-enoden.js";
 import { startGame as startL04 } from "./games/l04-yokohama.js";
 import { startGame as startL05 } from "./games/l05-nikko.js";
+import { mountQuiz } from "./quiz/quiz-ui.js";
+import { mountChinaQuiz } from "./quiz-china/china-quiz.js";
 
 const LEVELS = [
   {
@@ -54,6 +56,7 @@ const screens = {
   game: document.getElementById("screen-game"),
   gallery: document.getElementById("screen-gallery"),
   settings: document.getElementById("screen-settings"),
+  quiz: document.getElementById("screen-quiz"),
 };
 
 const el = {
@@ -80,6 +83,55 @@ let save = loadSave();
 let destroyGame = null;
 let currentLevelId = null;
 let pendingAgain = null;
+/** @type {null | (() => void)} */
+let quizDestroy = null;
+
+function teardownQuiz() {
+  if (quizDestroy) {
+    quizDestroy();
+    quizDestroy = null;
+  }
+  const qr = document.getElementById("quiz-root");
+  if (qr) qr.innerHTML = "";
+}
+
+function openQuiz() {
+  teardownQuiz();
+  if (destroyGame) {
+    destroyGame();
+    destroyGame = null;
+  }
+  currentLevelId = null;
+  el.gameRoot.innerHTML = "";
+  const root = document.getElementById("quiz-root");
+  if (!root) return;
+  quizDestroy = mountQuiz(root, {
+    onBack: () => {
+      teardownQuiz();
+      showScreen("hub");
+    },
+  });
+  showScreen("quiz");
+}
+
+function openChinaQuiz() {
+  teardownQuiz();
+  if (destroyGame) {
+    destroyGame();
+    destroyGame = null;
+  }
+  currentLevelId = null;
+  el.gameRoot.innerHTML = "";
+  const root = document.getElementById("quiz-root");
+  if (!root) return;
+  quizDestroy = mountChinaQuiz(root, {
+    onBack: () => {
+      teardownQuiz();
+      showScreen("hub");
+    },
+  });
+  showScreen("quiz");
+}
 
 function isSightseeing() {
   return document.querySelector('input[name="difficulty"]:checked')?.value === "sightseeing";
@@ -103,6 +155,30 @@ function showScreen(name) {
 
 function buildCards() {
   el.cards.innerHTML = "";
+  const quizBtn = document.createElement("button");
+  quizBtn.type = "button";
+  quizBtn.className = "level-card quiz-entry-card";
+  quizBtn.innerHTML = `
+    <div class="quiz-entry-visual" aria-hidden="true">問</div>
+    <div class="meta">
+      <p class="name">日本知识问答</p>
+      <p class="spot">30 道文化选择题 · 左右切换题目 · 交卷后等级与错题解析</p>
+    </div>`;
+  quizBtn.addEventListener("click", openQuiz);
+  el.cards.appendChild(quizBtn);
+
+  const chinaBtn = document.createElement("button");
+  chinaBtn.type = "button";
+  chinaBtn.className = "level-card quiz-entry-card china-entry-card";
+  chinaBtn.innerHTML = `
+    <div class="quiz-entry-visual china-entry-visual" aria-hidden="true">华</div>
+    <div class="meta">
+      <p class="name">中国文化知识问答</p>
+      <p class="spot">30 道文化选择题 · 与日本卷相同操作 · 独立题库与评语</p>
+    </div>`;
+  chinaBtn.addEventListener("click", openChinaQuiz);
+  el.cards.appendChild(chinaBtn);
+
   for (const lv of LEVELS) {
     const b = document.createElement("button");
     b.type = "button";
@@ -137,6 +213,7 @@ function renderGallery() {
 function startLevel(id) {
   const lv = LEVELS.find((x) => x.id === id);
   if (!lv) return;
+  teardownQuiz();
   if (destroyGame) {
     destroyGame();
     destroyGame = null;
@@ -190,6 +267,7 @@ el.resultHub.addEventListener("click", () => {
 });
 
 el.btnHome.addEventListener("click", () => {
+  teardownQuiz();
   if (destroyGame) {
     destroyGame();
     destroyGame = null;
@@ -201,6 +279,7 @@ el.btnHome.addEventListener("click", () => {
 });
 
 el.btnGallery.addEventListener("click", () => {
+  teardownQuiz();
   if (destroyGame) {
     destroyGame();
     destroyGame = null;
@@ -213,6 +292,7 @@ el.btnGallery.addEventListener("click", () => {
 });
 
 el.btnSettings.addEventListener("click", () => {
+  teardownQuiz();
   if (destroyGame) {
     destroyGame();
     destroyGame = null;
